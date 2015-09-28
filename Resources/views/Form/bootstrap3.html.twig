@@ -1,0 +1,155 @@
+{% trans_default_domain 'CyberAppTreeChoiceBundle' %}
+
+{% block tree_choice_widget %}
+    {% spaceless %}
+        {% block tree_choice_widget_selected %}
+            <p id="{{ id ~ '_selected' }}" data-label="{{ '<strong>' ~ 'tree_choice.selected'|trans ~ '</strong>' }}"
+               data-delimiter="{{ delimiter }}"{% if not value|length %} style="display: none"{% endif %}
+               data-prototype="{{ '%text<input type="hidden" name="' ~  full_name ~ '" value="%id" />' }}">
+                {% for val in value %}
+                    {{ choices[val].label }}<input type="hidden" name="{{ full_name }}" value="{{ val }}" />
+                    {%- if not loop.last %},{% endif %}
+                {% endfor %}
+            </p>
+        {% endblock %}
+        {% block tree_choice_widget_modal %}
+            <p><button type="button" class="btn btn-primary" data-toggle="modal"
+                       data-target="#{{ id ~ '_modal' }}">{{ 'tree_choice.select'|trans }}</button></p>
+            <div class="modal fade" id="{{ id ~ '_modal' }}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            {% block tree_choice_widget_modal_header %}
+                                {% if search %}
+                                    <div class="row">
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                            {% block tree_choice_widget_search %}
+                                                <div class="input-group" id="{{ id ~ '_search' }}">
+                                                    <input type="text" class="form-control"
+                                                           placeholder="{{ 'tree_choice.search.placeholder'|trans }}"/>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-behaviour="clear" data-toggle="tooltip"
+                                                                title="{{ 'tree_choice.search.clear'|trans }}"
+                                                                data-container="body">{{ icon('close') }}</button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-behaviour="find" data-toggle="tooltip"
+                                                                title="{{ 'tree_choice.search.find'|trans }}"
+                                                                data-container="body">{{ icon('search') }}</button>
+                                                    </span>
+                                                </div>
+                                            {% endblock %}
+                                        </div>
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                            {% block tree_choice_widget_modal_close %}
+                                                <button type="button" class="{% if search %}btn btn-danger pull-right{% else %}close{% endif %}"
+                                                        data-toggle="tooltip" data-container="body" title="{{ 'tree_choice.close'|trans }}"
+                                                        data-dismiss="modal">{% if search %}{{ icon('close') }}{% else %}&times;{% endif %}</button>
+                                            {% endblock %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {{ block('tree_choice_widget_modal_close') }}
+                                {% endif %}
+                            {% endblock %}
+                        </div>
+                        <div class="modal-body">
+                            {% block tree_choice_widget_modal_body %}
+                                <div class="tree-choice-body" id="{{ id ~ '_tree' }}"></div>
+                            {% endblock %}
+                        </div>
+                        <div class="modal-footer">
+                            {% block tree_choice_widget_modal_footer %}
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                        id="{{ id ~ '_save' }}">{{ 'tree_choice.save'|trans }}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{{ 'tree_choice.close'|trans }}</button>
+                            {% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block tree_choice_stylesheet %}
+    <style type="text/css">
+        .tree-choice-body {
+            overflow: auto;
+            max-height: 300px;
+        }
+    </style>
+{% endblock %}
+
+{% block tree_choice_javascript %}
+    <script type="text/javascript">
+        if (! jQuery) {
+            throw new Error("jQuery is not defined");
+        }
+
+        (function ($) {
+            "use strict";
+
+            if (! $.fn.jstree) {
+                throw new Error("jQuery jsTree plugin is not defined");
+            }
+
+            $(function () {
+                var treeEl = $("#{{ id ~ '_tree' }}"),
+                    saveEl = $("#{{ id ~ '_save' }}"),
+                    searchEl = $("#{{ id ~ '_search' }}"),
+                    selectedEl = $("#{{ id ~ '_selected' }}"),
+                    selectedTpl = selectedEl.data("prototype"),
+                    selectedLabel = selectedEl.data("label"),
+                    selectedDelimiter = selectedEl.data("delimiter");
+
+                var jsTree = treeEl
+                        .jstree({{ js_tree|json_encode|raw }})
+                        .jstree(true);
+
+                saveEl.click(function () {
+                    var html = [],
+                        selected = jsTree.get_selected();
+
+                    if (! ($.isArray(selected) && selected.length > 0)) {
+                        selectedEl.hide();
+                        return ;
+                    }
+
+                    $.each(selected, function (index, id) {
+                        var item = jsTree.get_node(id);
+                        html.push(selectedTpl.replace('%text', item.text).replace('%id', item.id));
+                    });
+
+                    selectedEl.show().html(selectedLabel + " " + html.join(selectedDelimiter));
+                });
+
+                {% if search -%}
+                    (function () {
+                        var search = function () {
+                                jsTree.search(control.val());
+                            },
+                            control = $("input[type=text]", this)
+                            .keypress(function (e) {
+                                if (e.keyCode != 13) {
+                                    return ;
+                                }
+
+                                search();
+
+                                return false;
+                            });
+
+                        $("[data-behaviour=clear]").click(function () {
+                            control.val('');
+                            jsTree.search('');
+                        });
+
+                        $("[data-behaviour=find]").click(search);
+                    }).call(searchEl);
+                {%- endif %}
+            });
+        })(jQuery);
+    </script>
+{% endblock %}

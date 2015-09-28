@@ -1,0 +1,25 @@
+{
+    "name": "cyberapp/tree-choice-bundle",
+    "description": "Symfony2 Tree Choice Bundle",
+    "keywords": ["Form", "Tree", "Choice", "jstree"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Novichkov",
+            "email": "snovichkov@cyberapp.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "symfony/symfony": "~2.7",
+        "doctrine/doctrine-bundle": "~1.4",
+        "gedmo/doctrine-extensions": "~2.4",
+        "genemu/form-bundle": "~2.2",
+        "vakata/jstree": "~3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "CyberApp\\TreeChoiceBundle\\": ""
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="cyber_app.form.type.tree_choice" class="CyberApp\TreeChoiceBundle\Form\Type\TreeChoiceType">
+            <argument type="service" id="translator" />
+            <argument type="string">CyberAppTreeChoiceBundle</argument>
+            <tag name="form.type" alias="tree_choice"/>
+        </service>
+
+        <service id="cyber_app.form.type_guesser.tree_choice"
+                 class="CyberApp\TreeChoiceBundle\Form\Type\TreeChoiceTypeGuesser">
+            <argument type="service" id="doctrine"/>
+            <tag name="form.type_guesser"/>
+        </service>
+
+        <service id="cyber_app.validator.tree_choice" class="CyberApp\TreeChoiceBundle\Validator\Constraint\TreeChoiceValidator">
+            <argument type="service" id="doctrine" />
+            <tag name="validator.constraint_validator" alias="tree_choice" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,11 @@
+tree_choice:
+    save: "Ок"
+    close: "Закрыть"
+    select: "Выбрать"
+    loading: "Загрузка ..."
+    selected: "Выбранные:"
+    search:
+        find: "Найти"
+        clear: "Очистить"
+        placeholder: "Поиск..."
+
