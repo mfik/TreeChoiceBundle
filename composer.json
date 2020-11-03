@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "symfony/symfony": ">=2.7",
-        "doctrine/doctrine-bundle": ">=1.4",
-        "gedmo/doctrine-extensions": ">=2.4",
-        "genemu/form-bundle": ">=2.2",
-        "vakata/jstree": ">=3.2"
+        "php": "*",
+        "symfony/symfony": "*",
+        "doctrine/doctrine-bundle": "*",
+        "gedmo/doctrine-extensions": "*",
+        "genemu/form-bundle": "*",
+        "vakata/jstree": "*"
     },
     "autoload": {
         "psr-4": {
